@@ -1,0 +1,5 @@
+{
+  "name": "Where is my money?",
+  "description": "Mobile-first personal finance tracker for net worth and subscriptions.",
+  "requestFramePermissions": []
+}
