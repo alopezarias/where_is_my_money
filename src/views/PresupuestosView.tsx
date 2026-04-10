@@ -247,13 +247,13 @@ function SwipeableCategoryItem({
   onUpdateAmount, 
   onDelete, 
   onEdit 
-}: { 
+}: React.PropsWithChildren<{ 
   category: BudgetCategory; 
   isEditable: boolean; 
   onUpdateAmount: (id: string, amount: number) => void; 
   onDelete: () => void; 
   onEdit: () => void; 
-}) {
+}>) {
   const controls = useAnimation();
 
   const handleDragEnd = (event: any, info: PanInfo) => {

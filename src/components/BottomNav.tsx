@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils';
 import { Wallet, CalendarRange, PieChart, LayoutDashboard } from 'lucide-react';
 
 export type Tab = 'resumen' | 'patrimonio' | 'suscripciones' | 'presupuestos';
+export const ROOT_TABS: Tab[] = ['resumen', 'patrimonio', 'suscripciones', 'presupuestos'];
 
 interface BottomNavProps {
   activeTab: Tab;
@@ -17,7 +18,7 @@ export function BottomNav({ activeTab, onChange }: BottomNavProps) {
   ] as const;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 pb-[env(safe-area-inset-bottom)] z-50 transition-colors">
+    <nav className="fixed bottom-0 left-0 right-0 border-t border-gray-200/80 dark:border-gray-800/80 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md pb-[env(safe-area-inset-bottom)] z-50 transition-colors">
       <div className="flex justify-around items-center h-16">
         {tabs.map((tab) => {
           const Icon = tab.icon;

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Where Is My Money</string>
+    <string name="title_activity_main">Where Is My Money</string>
+    <string name="package_name">com.whereismymoney.app</string>
+    <string name="custom_url_scheme">com.whereismymoney.app</string>
+</resources>

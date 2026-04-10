@@ -1,6 +1,35 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
+:root {
+  color-scheme: light;
+  background-color: #f9fafb;
+}
+
+:root.dark {
+  color-scheme: dark;
+  background-color: #030712;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+}
+
+html {
+  background: #f9fafb;
+}
+
+body {
+  margin: 0;
+  overscroll-behavior-y: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  background: inherit;
+}
+
 /* Mobile-like minimal scrollbar */
 ::-webkit-scrollbar {
   width: 5px;

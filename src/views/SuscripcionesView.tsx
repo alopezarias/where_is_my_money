@@ -454,11 +454,11 @@ function SwipeableSubscriptionItem({
   subscription, 
   onDelete, 
   onEdit 
-}: { 
+}: React.PropsWithChildren<{ 
   subscription: Subscription; 
   onDelete: () => void; 
   onEdit: () => void; 
-}) {
+}>) {
   const controls = useAnimation();
 
   const handleDragEnd = (event: any, info: PanInfo) => {

@@ -231,13 +231,13 @@ function SwipeableAccountItem({
   onUpdateBalance, 
   onDelete, 
   onEdit 
-}: { 
+}: React.PropsWithChildren<{ 
   account: Account; 
   isCurrentMonth: boolean; 
   onUpdateBalance: (id: string, balance: number) => void; 
   onDelete: () => void; 
   onEdit: () => void; 
-}) {
+}>) {
   const controls = useAnimation();
 
   const handleDragEnd = (event: any, info: PanInfo) => {
