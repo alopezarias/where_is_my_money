@@ -16,6 +16,7 @@ export function PatrimonioView({ onSettingsClick }: { onSettingsClick: () => voi
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [accountToDelete, setAccountToDelete] = useState<string | null>(null);
   const [accountToEdit, setAccountToEdit] = useState<Account | null>(null);
+  const [accountBalanceToEdit, setAccountBalanceToEdit] = useState<Account | null>(null);
 
   const realCurrentDate = new Date();
   const realCurrentMonthId = format(realCurrentDate, 'yyyy-MM');
@@ -170,6 +171,7 @@ export function PatrimonioView({ onSettingsClick }: { onSettingsClick: () => voi
                 account={account}
                 isCurrentMonth={isCurrentMonth}
                 onUpdateBalance={updateAccountBalance}
+                onOpenBalanceEditor={() => setAccountBalanceToEdit(account)}
                 onDelete={() => setAccountToDelete(account.id)}
                 onEdit={() => setAccountToEdit(account)}
               />
@@ -192,6 +194,14 @@ export function PatrimonioView({ onSettingsClick }: { onSettingsClick: () => voi
           account={accountToEdit}
           onClose={() => setAccountToEdit(null)}
           onSave={editAccountAcrossAllMonths}
+        />
+      )}
+
+      {accountBalanceToEdit && (
+        <EditAccountBalanceModal
+          account={accountBalanceToEdit}
+          onClose={() => setAccountBalanceToEdit(null)}
+          onSave={updateAccountBalance}
         />
       )}
 
@@ -229,19 +239,21 @@ function SwipeableAccountItem({
   account, 
   isCurrentMonth, 
   onUpdateBalance, 
+  onOpenBalanceEditor,
   onDelete, 
   onEdit 
 }: React.PropsWithChildren<{ 
   account: Account; 
   isCurrentMonth: boolean; 
   onUpdateBalance: (id: string, balance: number) => void; 
+  onOpenBalanceEditor: () => void;
   onDelete: () => void; 
   onEdit: () => void; 
 }>) {
   const controls = useAnimation();
 
   const handleDragEnd = (event: any, info: PanInfo) => {
-    const threshold = 80;
+    const threshold = 56;
     if (info.offset.x > threshold && isCurrentMonth) {
       onEdit();
       controls.start({ x: 0 });
@@ -287,17 +299,53 @@ function SwipeableAccountItem({
           </div>
         </div>
         <div className="flex items-center">
-          <input
-            type="number"
-            value={account.balance === 0 ? '' : account.balance}
-            onChange={(e) => onUpdateBalance(account.id, parseFloat(e.target.value) || 0)}
-            disabled={!isCurrentMonth}
-            className="w-24 text-right font-semibold text-gray-900 dark:text-white bg-transparent border-b border-transparent focus:border-blue-500 focus:outline-none disabled:opacity-100 disabled:bg-transparent"
-            placeholder="0.00"
-            onPointerDown={(e) => e.stopPropagation()}
-          />
+          <button
+            type="button"
+            data-swipe-ignore="true"
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenBalanceEditor();
+            }}
+            className="text-right"
+          >
+            <p className="font-semibold text-gray-900 dark:text-white">
+              {account.balance.toLocaleString('es-ES', { style: 'currency', currency: account.currency })}
+            </p>
+          </button>
         </div>
       </motion.div>
+    </div>
+  );
+}
+
+function EditAccountBalanceModal({ account, onClose, onSave }: { account: Account, onClose: () => void, onSave: (id: string, balance: number) => void }) {
+  const [value, setValue] = useState(account.balance === 0 ? '' : account.balance.toString());
+
+  const handleChange = (nextValue: string) => {
+    setValue(nextValue);
+    onSave(account.id, parseFloat(nextValue) || 0);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 z-[60] flex items-end sm:items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-white dark:bg-gray-900 w-full max-w-sm rounded-2xl p-6 animate-in zoom-in-95 duration-200 transition-colors" onClick={(e) => e.stopPropagation()}>
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white">{account.name}</h3>
+          <button onClick={onClose} className="text-gray-500 dark:text-gray-400 active:text-gray-800 dark:active:text-gray-200 text-2xl leading-none">&times;</button>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Saldo actual</label>
+          <input
+            type="number"
+            value={value}
+            onChange={(e) => handleChange(e.target.value)}
+            className="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg px-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+            placeholder="0.00"
+            autoFocus
+          />
+        </div>
+      </div>
     </div>
   );
 }

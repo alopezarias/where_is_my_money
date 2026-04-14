@@ -15,6 +15,7 @@ export function PresupuestosView({ onSettingsClick }: { onSettingsClick: () => v
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
   const [categoryToEdit, setCategoryToEdit] = useState<BudgetCategory | null>(null);
+  const [categoryAmountToEdit, setCategoryAmountToEdit] = useState<BudgetCategory | null>(null);
 
   const realCurrentDate = new Date();
   const realCurrentMonthId = format(realCurrentDate, 'yyyy-MM');
@@ -186,6 +187,7 @@ export function PresupuestosView({ onSettingsClick }: { onSettingsClick: () => v
                 category={category}
                 isEditable={isCurrentMonth || isPastMonth}
                 onUpdateAmount={updateCategoryAmount}
+                onOpenAmountEditor={() => setCategoryAmountToEdit(category)}
                 onDelete={() => setCategoryToDelete(category.id)}
                 onEdit={() => setCategoryToEdit(category)}
               />
@@ -208,6 +210,14 @@ export function PresupuestosView({ onSettingsClick }: { onSettingsClick: () => v
           category={categoryToEdit}
           onClose={() => setCategoryToEdit(null)}
           onSave={editCategoryAcrossAllMonths}
+        />
+      )}
+
+      {categoryAmountToEdit && (
+        <EditCategoryAmountModal
+          category={categoryAmountToEdit}
+          onClose={() => setCategoryAmountToEdit(null)}
+          onSave={updateCategoryAmount}
         />
       )}
 
@@ -245,19 +255,21 @@ function SwipeableCategoryItem({
   category, 
   isEditable, 
   onUpdateAmount, 
+  onOpenAmountEditor,
   onDelete, 
   onEdit 
 }: React.PropsWithChildren<{ 
   category: BudgetCategory; 
   isEditable: boolean; 
   onUpdateAmount: (id: string, amount: number) => void; 
+  onOpenAmountEditor: () => void;
   onDelete: () => void; 
   onEdit: () => void; 
 }>) {
   const controls = useAnimation();
 
   const handleDragEnd = (event: any, info: PanInfo) => {
-    const threshold = 80;
+    const threshold = 56;
     if (info.offset.x > threshold && isEditable) {
       onEdit();
       controls.start({ x: 0 });
@@ -302,17 +314,53 @@ function SwipeableCategoryItem({
           </div>
         </div>
         <div className="flex items-center">
-          <input
-            type="number"
-            value={category.amount === 0 ? '' : category.amount}
-            onChange={(e) => onUpdateAmount(category.id, parseFloat(e.target.value) || 0)}
-            disabled={!isEditable}
-            className="w-24 text-right font-semibold text-gray-900 dark:text-white bg-transparent border-b border-transparent focus:border-blue-500 focus:outline-none disabled:opacity-100 disabled:bg-transparent"
-            placeholder="0.00"
-            onPointerDown={(e) => e.stopPropagation()}
-          />
+          <button
+            type="button"
+            data-swipe-ignore="true"
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenAmountEditor();
+            }}
+            className="text-right"
+          >
+            <p className="font-semibold text-gray-900 dark:text-white">
+              {category.amount.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })}
+            </p>
+          </button>
         </div>
       </motion.div>
+    </div>
+  );
+}
+
+function EditCategoryAmountModal({ category, onClose, onSave }: { category: BudgetCategory, onClose: () => void, onSave: (id: string, amount: number) => void }) {
+  const [value, setValue] = useState(category.amount === 0 ? '' : category.amount.toString());
+
+  const handleChange = (nextValue: string) => {
+    setValue(nextValue);
+    onSave(category.id, parseFloat(nextValue) || 0);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 z-[60] flex items-end sm:items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-white dark:bg-gray-900 w-full max-w-sm rounded-2xl p-6 animate-in zoom-in-95 duration-200 transition-colors" onClick={(e) => e.stopPropagation()}>
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white">{category.name}</h3>
+          <button onClick={onClose} className="text-gray-500 dark:text-gray-400 active:text-gray-800 dark:active:text-gray-200 text-2xl leading-none">&times;</button>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Importe asignado</label>
+          <input
+            type="number"
+            value={value}
+            onChange={(e) => handleChange(e.target.value)}
+            className="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg px-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+            placeholder="0.00"
+            autoFocus
+          />
+        </div>
+      </div>
     </div>
   );
 }
