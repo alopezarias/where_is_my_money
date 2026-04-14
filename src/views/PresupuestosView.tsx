@@ -285,6 +285,7 @@ function SwipeableCategoryItem({
 
       {/* Foreground card */}
       <motion.div
+        data-swipe-ignore="true"
         drag={isEditable ? "x" : false}
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={0.2}

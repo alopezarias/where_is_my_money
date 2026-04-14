@@ -488,6 +488,7 @@ function SwipeableSubscriptionItem({
 
       {/* Foreground card */}
       <motion.div
+        data-swipe-ignore="true"
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={0.2}

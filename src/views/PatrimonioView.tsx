@@ -269,6 +269,7 @@ function SwipeableAccountItem({
 
       {/* Foreground card */}
       <motion.div
+        data-swipe-ignore="true"
         drag={isCurrentMonth ? "x" : false}
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={0.2}
