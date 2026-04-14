@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <rect width="1024" height="1024" rx="240" fill="#0F172A"/>
+  <path fill="#14B8A6" d="M512 150C351 150 220 281 220 442c0 184 168 305 292 462c124-157 292-278 292-462 0-161-131-292-292-292Z"/>
+  <circle cx="512" cy="430" r="176" fill="#F8FAFC"/>
+  <text x="512" y="518" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="250" font-weight="700" fill="#0F172A">€</text>
+</svg>

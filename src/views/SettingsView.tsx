@@ -1,6 +1,5 @@
 import React from 'react';
 import { X, Moon, Sun } from 'lucide-react';
-import { motion, useAnimation, useDragControls, type PanInfo } from 'motion/react';
 
 interface SettingsViewProps {
   onClose: () => void;
@@ -9,39 +8,12 @@ interface SettingsViewProps {
 }
 
 export function SettingsView({ onClose, theme, toggleTheme }: SettingsViewProps) {
-  const controls = useAnimation();
-  const dragControls = useDragControls();
-
-  const handleDragEnd = async (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    const shouldClose = info.offset.y > 110 || info.velocity.y > 700;
-
-    if (shouldClose) {
-      await controls.start({ y: '100%', opacity: 0, transition: { duration: 0.18 } });
-      onClose();
-      return;
-    }
-
-    await controls.start({ y: 0, opacity: 1, transition: { type: 'spring', stiffness: 280, damping: 28 } });
-  };
-
   return (
     <div className="fixed inset-0 bg-gray-50 dark:bg-gray-950 z-[100] flex flex-col transition-colors">
-      <motion.div
-        drag="y"
-        dragControls={dragControls}
-        dragListener={false}
-        dragConstraints={{ top: 0, bottom: 0 }}
-        dragElastic={{ top: 0, bottom: 0.16 }}
-        animate={controls}
-        initial={{ y: 0, opacity: 1 }}
-        onDragEnd={handleDragEnd}
-        className="flex h-full flex-col"
-      >
+      <div className="flex h-full flex-col">
         <div
-          onPointerDown={(event) => dragControls.start(event)}
-          className="bg-white dark:bg-gray-900 px-4 pt-[max(env(safe-area-inset-top),1rem)] pb-4 shadow-sm z-10 transition-colors touch-none"
+          className="bg-white dark:bg-gray-900 px-4 pt-[max(env(safe-area-inset-top),1rem)] pb-4 shadow-sm z-10 transition-colors"
         >
-          <div className="mx-auto mb-3 mt-1 h-1.5 w-12 rounded-full bg-gray-300 dark:bg-gray-700" />
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Ajustes</h1>
             <button 
@@ -81,7 +53,7 @@ export function SettingsView({ onClose, theme, toggleTheme }: SettingsViewProps)
         <div className="pb-[calc(2rem+env(safe-area-inset-bottom))] text-center">
           <p className="text-sm text-gray-400 dark:text-gray-500 font-medium">v 0.1.2</p>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
